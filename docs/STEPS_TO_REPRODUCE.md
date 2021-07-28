@@ -30,20 +30,21 @@
   cat /etc/redhat-release
   ```
 
-2. install nano
+2. install nano and use nano
     ``` sh
     yum -y install nano
+    export VISUAL="nano"
     ````
 3. export domain as ENV var for setup
     ``` sh
-    export HTTPD_ENV_URL=dco01la-1692s.cfs.its.nyu.edu
+    export HTTPD_ENV_URL="dco01la-1692s.cfs.its.nyu.edu"
     ```
 
 ### Install Apache
 
 4. install + enable apache
     ``` sh
-    yum -y install httpd
+    yum -y install httpd mod_ssl
     systemctl start httpd
     mkdir -p /var/www/log
     mkdir -p /etc/httpd/sites-available /etc/httpd/sites-enabled
@@ -59,13 +60,14 @@
     ```
 
 ### Serve test app with Apache
-6. enable vhosts with domain
+6. enable vhosts with domain (NOTE: certbot doesn't seem to play nice with ENV vars in apache configs, hence the `sed` command below to replace it with the literal domain string)
 
   ``` sh
   grep -qxF 'IncludeOptional sites-enabled/*.conf' /etc/httpd/conf/httpd.conf || echo 'IncludeOptional sites-enabled/*.conf' >> /etc/httpd/conf/httpd.conf
   rm -f /etc/httpd/conf.d/ssl.conf && touch /etc/httpd/conf.d/ssl.conf
   echo "Listen 443 https" >> /etc/httpd/conf.d/ssl.conf
   yes | cp -f ~/acme-certbot-demo/conf/site.conf /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf
+  sed -i "s/\$HTTPD_ENV_URL/${HTTPD_ENV_URL}/" /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf
   ln -s /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf /etc/httpd/sites-enabled/${HTTPD_ENV_URL}.conf
   ```
 7. Restart Apache
@@ -126,7 +128,7 @@
 
 11. install certs & modify apache to use them
   ``` sh
-  certbot --apache
+  certbot --apache --domain $HTTPD_ENV_URL
   ```
 
 12. show certs
@@ -142,10 +144,26 @@
 
 ### Set up a cron for cert renewal
 
-14. Write a cron to check & renew cert if appropriate, then automate an apache restart.
+14. Start and check status for crond
+  ``` sh
+  systemctl enable crond
+  systemctl status crond
+  ```
+
+15. Write a cron to check & renew cert if appropriate, then automate an apache restart.
 
   ``` sh
+  crontab -e
+  ```
+  Add the job and save the file:
+
+  ```
   6 1,13 * * * certbot renew --renew-hook "systemctl restart httpd"
+  ```
+
+16. Check for cron job
+  ``` sh
+  crontab -l
   ```
 
 --------
@@ -179,7 +197,6 @@
   + uninstall apache
     ``` sh
     systemctl stop httpd
-    yum erase httpd httpd-tools apr apr-util
-    yum -y install httpd
+    yum -y erase httpd httpd-tools apr apr-util mod_ssl
     ```
-  + restart from step 1.3 above
+  + restart from step 3 above
