@@ -7,3 +7,9 @@
 .hero-body a:hover {
   border-bottom: none;
 }
+
+.button:hover,
+.button:focus {
+   box-shadow: 0.35em 0.35em 0 rgba(0, 97, 116, 0.8);
+   transform: translateY(-0.15em);
+}
