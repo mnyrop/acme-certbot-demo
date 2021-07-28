@@ -1,5 +1,9 @@
 # acme-certbot-demo
 
+<a href="http://dco01la-1692s.cfs.its.nyu.edu/">
+  <img alt="screenshot of test app" src="docs/screenshot.png" width="500">
+</a>
+
 ## Purpose
 
 This repo provides documentation and a proof-of-concept scaffold for cert automation using the [ACME protocol](https://sectigo.com/resource-library/what-is-acme-protocol).
