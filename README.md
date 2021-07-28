@@ -108,22 +108,23 @@
 
 ## 3. use certbot
 
-6.5 OPTIONAL: register + use sectigo ACME server instead of default let's encrypt. You will need to replace the sample credentials below with your own
+7. OPTIONAL: register + use sectigo ACME server instead of default let's encrypt. You will need to replace the sample credentials below with your own:  
+   
     ``` sh
     certbot register --email <CUSTOMER_EMAIL>@<DOMAIN.COM> --server https:acme.sectigo.net/v2/InCommonRSAOV --eab-kid bxFGQVK9ed1oNRRVuz3FZg --eab-hmac- key ek2TIQpQcG8Tlt- 5OjMEteSBISa7-fvWAWDyMpczV- nRXc7PkSMtuvW31YQlxA8t0vTf0zOz3xAwEGNI1n0gEw
     ```
 
-7. install certs & modify apache to use them
+8. install certs & modify apache to use them
     ``` sh
     certbot --apache
     ```
 
-8. show certs
+9. show certs
     ``` sh
     certbot certificates
     ```
 
-9. test automatic renewal
+10. test automatic renewal
     ``` sh
     certbot renew --dry-run
     ```
