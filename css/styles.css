@@ -1,0 +1,9 @@
+.is-hidden {
+  display: none;
+}
+.hero-body a {
+  border-bottom: 2px solid white;
+}
+.hero-body a:hover {
+  border-bottom: none;
+}
