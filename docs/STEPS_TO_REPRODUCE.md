@@ -181,6 +181,7 @@
   + revoke + delete cert
     ``` sh
     certbot revoke --cert-name dco01la-1692s.cfs.its.nyu.edu
+    certbot rollback
     ```
   + uninstall apache
     ``` sh

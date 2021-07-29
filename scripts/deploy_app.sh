@@ -1,3 +1,5 @@
+source ./conf/.env
+
 git clone https://github.com/mnyrop/acme-certbot-demo.git ~/acme-certbot-demo
 yes | cp -ru ~/acme-certbot-demo/app/* /var/www/html/
 
