@@ -8,6 +8,7 @@
 
 ## FAQs
 - [Do new private keys get regenerated on certificate renewal?](https://community.letsencrypt.org/t/do-new-private-keys-get-regenerated-on-certificate-renewal/21486)
+- [ACME sharing external account binding security questions](https://community.letsencrypt.org/t/acme-sharing-external-account-binding-security-questions/133305)
 
 ## Articles + Blog posts
 
