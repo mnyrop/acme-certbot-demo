@@ -1,18 +1,18 @@
 # Steps to Reproduce
 
 ## ToC
-- [Instructions]()
-  + [Basic set up]()
-  + [Install Apache]()
-  + [Deploy test app]()
-  + [Serve test app with Apache]()
-  + [Install Certbot]()
-    - [Option a: via pip]()
-    - [Option b: via snapd]()
-  + [Use Certbot to provision a cert]()
-  + [Use Certbot to dry run a cert renewal]()
-  + [Set up a cron for cert renewal]()
-- [Misc notes]()
+- [Instructions](#instructions)
+  + [Basic set up](#basic-set-up)
+  + [Install Apache](#install-apache)
+  + [Deploy test app](#deploy-test-app)
+  + [Serve test app with Apache](#serve-test-app-with-apache)
+  + [Install Certbot](#install-certbot)
+    - [Option a: via pip](#option-a-via-pip)
+    - [Option b: via snapd](#option-b-via-snapd)
+  + [Use Certbot to provision a cert](#use-certbot-to-provision-a-cert)
+  + [Use Certbot to dry run a cert renewal](#use-certbot-to-dry-run-a-cert-renewal)
+  + [Set up a cron for cert renewal](#set-up-a-cron-for-cert-renewal)
+- [Misc notes](#misc-notes)
 
 --------
 
