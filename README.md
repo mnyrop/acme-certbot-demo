@@ -1,4 +1,4 @@
-# acme-certbot-demo
+# acme-certbot-demo :robot: :closed_lock_with_key: 
 
 <a href="http://dco01la-1692s.cfs.its.nyu.edu/">
   <img alt="screenshot of test app" src="app/assets/screenshot-https.png" width="500">
