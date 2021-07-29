@@ -21,14 +21,14 @@
 ### Basic set up
 
 0. log in as root
-  ``` sh
-  sudo su -
-  ```
+    ``` sh
+    sudo su -
+    ```
 
 1. check os version
-  ``` sh
-  cat /etc/redhat-release
-  ```
+    ``` sh
+    cat /etc/redhat-release
+    ```
 
 2. install nano and use nano
     ``` sh
@@ -62,18 +62,18 @@
 ### Serve test app with Apache
 6. enable vhosts with domain (NOTE: certbot doesn't seem to play nice with ENV vars in apache configs, hence the `sed` command below to replace it with the literal domain string)
 
-  ``` sh
-  grep -qxF 'IncludeOptional sites-enabled/*.conf' /etc/httpd/conf/httpd.conf || echo 'IncludeOptional sites-enabled/*.conf' >> /etc/httpd/conf/httpd.conf
-  rm -f /etc/httpd/conf.d/ssl.conf && touch /etc/httpd/conf.d/ssl.conf
-  echo "Listen 443 https" >> /etc/httpd/conf.d/ssl.conf
-  yes | cp -f ~/acme-certbot-demo/conf/site.conf /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf
-  sed -i "s/\$HTTPD_ENV_URL/${HTTPD_ENV_URL}/" /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf
-  ln -s /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf /etc/httpd/sites-enabled/${HTTPD_ENV_URL}.conf
-  ```
+    ``` sh
+    grep -qxF 'IncludeOptional sites-enabled/*.conf' /etc/httpd/conf/httpd.conf || echo 'IncludeOptional sites-enabled/*.conf' >> /etc/httpd/conf/httpd.conf
+    rm -f /etc/httpd/conf.d/ssl.conf && touch /etc/httpd/conf.d/ssl.conf
+    echo "Listen 443 https" >> /etc/httpd/conf.d/ssl.conf
+    yes | cp -f ~/acme-certbot-demo/conf/site.conf /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf
+    sed -i "s/\$HTTPD_ENV_URL/${HTTPD_ENV_URL}/" /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf
+    ln -s /etc/httpd/sites-available/${HTTPD_ENV_URL}.conf /etc/httpd/sites-enabled/${HTTPD_ENV_URL}.conf
+    ```
 7. Restart Apache
-  ``` sh
-  systemctl restart httpd
-  ```
+    ``` sh
+    systemctl restart httpd
+    ```
 
 ### Install Certbot
 
@@ -87,7 +87,7 @@
     /opt/certbot/bin/pip install --upgrade pip
     ```
 9. install certbot with pip
-    ```sh
+    ``` sh
     /opt/certbot/bin/pip install certbot certbot-apache
     ln -s /opt/certbot/bin/certbot /usr/bin/certbot
     ```
@@ -117,69 +117,57 @@
 ### Use Certbot to provision a cert
 
 10. OPTIONAL: register + use sectigo ACME server instead of default let's encrypt. You will need to replace the sample credentials below with your own:  
-  ``` sh
-  export ACME_EMAIL="customeremail@domain.com"
-  export ACME_SERVER="https:acme.sectigo.net/v2/InCommonRSAOV"
-  export ACME_EAB_KID="bxFGQVK9ed1oNRRVuz3FZg"
-  export ACME_EAB_HMAC_KEY="ek2TIQpQcG8Tlt- 5OjMEteSBISa7-fvWAWDyMpczV- nRXc7PkSMtuvW31YQlxA8t0vTf0zOz3xAwEGNI1n0gEw"
+    ``` sh
+    export ACME_EMAIL="customeremail@domain.com"
+    export ACME_SERVER="https:acme.sectigo.net/v2/InCommonRSAOV"
+    export ACME_EAB_KID="bxFGQVK9ed1oNRRVuz3FZg"
+    export ACME_EAB_HMAC_KEY="ek2TIQpQcG8Tlt- 5OjMEteSBISa7-fvWAWDyMpczV- nRXc7PkSMtuvW31YQlxA8t0vTf0zOz3xAwEGNI1n0gEw"
 
-  certbot register --email $ACME_EMAIL --server $ACME_SERVER --eab-kid $ACME_EAB_KID –-eab-hmac-key $ACME_EAB_HMAC_KEY
-  ```
+    certbot register --email $ACME_EMAIL --server $ACME_SERVER --eab-kid $ACME_EAB_KID –-eab-hmac-key $ACME_EAB_HMAC_KEY
+    ```
 
 11. install certs & modify apache to use them
-  ``` sh
-  certbot --apache --domain $HTTPD_ENV_URL
-  ```
+    ``` sh
+    certbot --apache --domain $HTTPD_ENV_URL
+    ```
 
 12. show certs
-  ``` sh
-  certbot certificates
-  ```
+    ``` sh
+    certbot certificates
+    ```
 
 ### Use Certbot to dry run a cert renewal
 13. test automatic renewal
-  ``` sh
-  certbot renew --dry-run
-  ```
+    ``` sh
+    certbot renew --dry-run
+    ```
 
 ### Set up a cron for cert renewal
 
 14. Start and check status for crond
-  ``` sh
-  systemctl enable crond
-  systemctl status crond
-  ```
+    ``` sh
+    systemctl enable crond
+    systemctl status crond
+    ```
 
 15. Write a cron to check & renew cert if appropriate, then automate an apache restart.
+    ``` sh
+    crontab -e
 
-  ``` sh
-  crontab -e
-  ```
-  Add the job and save the file:
-
-  ```
-  6 1,13 * * * certbot renew --renew-hook "systemctl restart httpd"
-  ```
+    # add the text below
+    6 1,13 * * * certbot renew --renew-hook "systemctl restart httpd"
+    ```
 
 16. Check for cron job
-  ``` sh
-  crontab -l
-  ```
+    ``` sh
+    crontab -l
+    ```
 
 --------
 
 ## Misc notes
 - gotchas:
-  + !!! make sure that there isn't a vhost in `/etc/httpd/conf.d/ssl.conf` that conflicts and routes 443 to self-signed certs instead of the new ones !!! if there are issues, replace the files contents:
-    - `rm /etc/httpd/conf.d/ssl.conf`
-    - `nano /etc/httpd/conf.d/ssl.conf`
-      ```txt
-      #
-      # When we also provide SSL we have to listen to the
-      # the HTTPS port in addition.
-      #
-      Listen 443 https
-      ```
+  + !!! make sure that there isn't a vhost in `/etc/httpd/conf.d/ssl.conf` that conflicts and routes 443 to self-signed certs instead of the new ones !!!
   + !!! make sure that **public** traffic is allowed on `:80` and `:443` !!!
 - dns troubleshooting
   + check A record `host dco01la-1692s.cfs.its.nyu.edu` (from anywhere)
